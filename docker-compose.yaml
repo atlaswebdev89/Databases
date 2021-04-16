@@ -1,0 +1,60 @@
+version: '3.1'
+
+services:
+    
+    db-mysql:
+        image: mysql:5.7
+        container_name: dbMysql
+        restart: always
+        ports:
+          - 8806:3306
+        environment:
+          MYSQL_ROOT_PASSWORD: mysql
+        volumes:
+          - dbMysql:/var/lib/mysql
+        networks:
+          - dbMysql
+    
+    db-ptgs:
+        image: postgres
+        container_name: dbPostgress
+        restart: always
+        ports:
+          - 8832:5432
+        environment:
+          POSTGRES_PASSWORD: example
+        networks:
+          - dbMysql
+    
+
+
+
+
+    adminer:
+        image: adminer
+        container_name: db_adminer
+        restart: always
+        ports:
+          - 8828:8080
+        networks:
+          - dbMysql
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: db_phpmyadmin
+        restart: always
+        ports: 
+          - 8827:80
+        environment:
+          PMA_HOST: db-mysql
+        depends_on:
+          - db-mysql
+        networks:
+          - dbMysql
+          
+networks:
+  dbMysql:
+    driver: bridge
+
+volumes:
+  dbMysql:
